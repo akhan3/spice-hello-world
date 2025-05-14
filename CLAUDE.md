@@ -11,7 +11,6 @@ This is a KiCad electronic design project focused on SPICE simulation, named "sp
 - Diode for rectification
 - 0.1μF capacitor for filtering
 - 1kΩ resistor as load
-- DC voltage source (1V with AC component)
 - SPICE ground reference nodes
 
 ## Simulation Configurations
@@ -57,6 +56,12 @@ Common SPICE commands that might be useful when modifying simulations:
 - `.ac <type> <points> <start_f> <end_f>` - AC analysis
 - `.save all` - Save all node voltages and branch currents
 - `.probe` - Enable probing of specific values
+
+## Project Images
+The project includes the following image files:
+- `images/schematic.png` - Circuit schematic diagram
+- `images/ac_analysis.png` - Bode plot from AC analysis
+- `images/transient_analysis.png` - Time domain plot from transient analysis
 
 ## Note on PCB Design
 This project focuses on simulation rather than physical implementation. The PCB file exists but is empty.

@@ -2,6 +2,10 @@
 
 A simple demonstration of SPICE simulation capabilities in KiCad, featuring a half-wave rectifier circuit.
 
+## Circuit Schematic
+
+![Circuit Schematic](images/schematic.png)
+
 ## Circuit Description
 
 This project demonstrates a basic half-wave rectifier with filtering:
@@ -15,15 +19,20 @@ This project demonstrates a basic half-wave rectifier with filtering:
 The project includes three preconfigured simulations:
 
 1. **Operating Point Analysis**
+   - Commands: `.op`, `.save all`, `.probe alli`, `.probe allp`
    - DC voltage and current values at each node
 
 2. **AC Analysis**
-   - Frequency sweep from 1Hz to 1GHz
-   - Voltage gain and phase plots 
+   - Commands: `.ac dec 20 1 1G` (Frequency sweep from 1Hz to 1GHz)
+   - Voltage gain and phase plots
+
+   ![AC Analysis](images/ac_analysis.png)
 
 3. **Transient Analysis**
-   - Time-domain simulation with 1μs steps over 100ms
+   - Commands: `.tran 1u 100m` (1μs step size over 100ms)
    - Input and output voltage waveform comparison
+   
+   ![Transient Analysis](images/transient_analysis.png)
 
 ## Getting Started
 
