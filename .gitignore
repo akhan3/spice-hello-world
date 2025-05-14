@@ -1,0 +1,25 @@
+# KiCad backup and autosave files
+*-backups/
+*.zip
+*-bak
+*-cache*
+_autosave-*
+\#auto_saved_files\#
+~*.lck
+
+# Temporary files
+.DS_Store
+*.000
+*.bak
+*.bck
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*.kicad_prl
+*.sch-bak
+*~
+_autosave-*
+*.tmp
+*-save.pro
+*-save.kicad_pcb
+fp-info-cache
+**/.claude/settings.local.json
