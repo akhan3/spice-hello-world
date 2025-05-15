@@ -419,6 +419,14 @@
     [
       "b3d630f6-3ac9-4ade-ac6a-b1b1d5c02435",
       "Root"
+    ],
+    [
+      "e0cecc9c-932c-4a81-986c-cd38087aea32",
+      "TTL NAND gate"
+    ],
+    [
+      "0941da83-a1a3-44e6-a559-d63aa441bdaa",
+      "Hallf wave rectifier"
     ]
   ],
   "text_variables": {}
