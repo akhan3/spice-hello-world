@@ -1,24 +1,9 @@
 \documentclass{beamer}
 \usepackage[utf8]{inputenc}
-\usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
 \usepackage{amsmath}
 \usepackage{amssymb}
-
-% Code listing setup
-\lstset{
-    basicstyle=\footnotesize\ttfamily,
-    backgroundcolor=\color{gray!10},
-    frame=single,
-    breaklines=true,
-    breakatwhitespace=false,
-    tabsize=2,
-    showstringspaces=false,
-    columns=flexible,
-    aboveskip=10pt,
-    belowskip=10pt
-}
 
 % Title page information
 \title{SPICE Simulator Tutorial}
@@ -108,12 +93,12 @@
     \end{columns}
     
     \subsection{Token Separation}
-    \begin{lstlisting}
-Separators: spaces, =, ( ), tabs
-Numbers: 1.23e-5, 0.0000123
-Strings: alphanumeric sequences
-Parameters: PARAM=VALUE format
-    \end{lstlisting}
+    \begin{itemize}
+        \item Separators: spaces, =, ( ), tabs
+        \item Numbers: 1.23e-5, 0.0000123
+        \item Strings: alphanumeric sequences
+        \item Parameters: PARAM=VALUE format
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{File Structure Best Practices}
@@ -183,60 +168,60 @@ Parameters: PARAM=VALUE format
     \end{itemize}
     
     \subsection{Parasitic Elements}
-    \begin{lstlisting}
-M1 d g s sub NMOS W=10u L=0.18u    ; Explicit substrate
-Cpd d sub 50f                      ; Drain-substrate cap
-Cgs g s 100f                       ; Gate-source cap
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{M1 d g s sub NMOS W=10u L=0.18u} ; Explicit substrate
+        \item \texttt{Cpd d sub 50f} ; Drain-substrate cap
+        \item \texttt{Cgs g s 100f} ; Gate-source cap
+    \end{itemize}
 \end{frame}
 
 \section{Independent Source Specifications}
 
 \begin{frame}{Independent Source Specifications}
     \subsection{Multi-Analysis Source Definition}
-    \begin{lstlisting}
-V1 1 0 DC_VALUE AC AC_MAG AC_PHASE TRANSIENT_FUNCTION
-I1 1 0 DC_VALUE AC AC_MAG AC_PHASE TRANSIENT_FUNCTION
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{V1 1 0 DC\_VALUE AC AC\_MAG AC\_PHASE TRANSIENT\_FUNCTION}
+        \item \texttt{I1 1 0 DC\_VALUE AC AC\_MAG AC\_PHASE TRANSIENT\_FUNCTION}
+    \end{itemize}
     
     \subsection{DC Analysis Sources}
-    \begin{lstlisting}
-VDC 1 0 5          ; 5V DC source
-VDC 1 0 DC 5       ; Explicit DC specification
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{VDC 1 0 5} ; 5V DC source
+        \item \texttt{VDC 1 0 DC 5} ; Explicit DC specification
+    \end{itemize}
     
     \subsection{AC Analysis Sources}
-    \begin{lstlisting}
-VAC 1 0 0 AC 1 0      ; 1V magnitude, 0° phase
-VAC 1 0 DC 0 AC 1 90  ; 0V DC, 1V AC at 90°
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{VAC 1 0 0 AC 1 0} ; 1V magnitude, 0$^\circ$ phase
+        \item \texttt{VAC 1 0 DC 0 AC 1 90} ; 0V DC, 1V AC at 90$^\circ$
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{Transient Analysis Functions}
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \subsection{Pulse Function}
-            \begin{lstlisting}
-PULSE V1 V2 TD TR TF PW PER
-V1: Initial value
-V2: Peak value  
-TD: Delay time
-TR: Rise time
-TF: Fall time
-PW: Pulse width
-PER: Period
-            \end{lstlisting}
+            \texttt{PULSE V1 V2 TD TR TF PW PER}
+            \begin{itemize}
+                \item V1: Initial value
+                \item V2: Peak value
+                \item TD: Delay time
+                \item TR: Rise time
+                \item TF: Fall time
+                \item PW: Pulse width
+                \item PER: Period
+            \end{itemize}
         \end{column}
         \begin{column}{0.5\textwidth}
             \subsection{Sinusoidal Function}
-            \begin{lstlisting}
-SIN VO VA FREQ TD THETA
-VO: Offset voltage
-VA: Amplitude
-FREQ: Frequency
-TD: Delay
-THETA: Damping factor
-            \end{lstlisting}
+            \texttt{SIN VO VA FREQ TD THETA}
+            \begin{itemize}
+                \item VO: Offset voltage
+                \item VA: Amplitude
+                \item FREQ: Frequency
+                \item TD: Delay
+                \item THETA: Damping factor
+            \end{itemize}
         \end{column}
     \end{columns}
     
@@ -252,9 +237,7 @@ THETA: Damping factor
 
 \begin{frame}{Device Models}
     \subsection{Model Definition Syntax}
-    \begin{lstlisting}
-.MODEL MODELNAME TYPE (PARAM1=VALUE1 PARAM2=VALUE2 ...)
-    \end{lstlisting}
+    \texttt{.MODEL MODELNAME TYPE (PARAM1=VALUE1 PARAM2=VALUE2 ...)}
     
     \begin{columns}
         \begin{column}{0.5\textwidth}
@@ -268,14 +251,14 @@ THETA: Damping factor
         \end{column}
         \begin{column}{0.5\textwidth}
             \subsection{Example Diode Model}
-            \begin{lstlisting}
-.MODEL DCLAMP D(
-+ IS=1e-14
-+ RS=0.1
-+ CJO=1p
-+ VJ=0.7
-+ M=0.5)
-            \end{lstlisting}
+            \begin{itemize}
+                \item \texttt{.MODEL DCLAMP D(}
+                \item \texttt{+ IS=1e-14}
+                \item \texttt{+ RS=0.1}
+                \item \texttt{+ CJO=1p}
+                \item \texttt{+ VJ=0.7}
+                \item \texttt{+ M=0.5)}
+            \end{itemize}
         \end{column}
     \end{columns}
 \end{frame}
@@ -287,12 +270,12 @@ THETA: Damping factor
         \textbf{Process Variations:} Statistical models, corner models, Monte Carlo parameters
     \end{alertblock}
     
-    \begin{lstlisting}[fontsize=\tiny]
-.MODEL NMOS NMOS (LEVEL=49 VERSION=3.3.0
-+ TOX=1.4E-8 XJ=1E-7 NCH=2.3549E17 VTH0=0.3691
-+ K1=0.5810697 K2=4.774618E-3 K3=0.0431669
-+ ... [hundreds of parameters for advanced models])
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.MODEL NMOS NMOS (LEVEL=49 VERSION=3.3.0}
+        \item \texttt{+ TOX=1.4E-8 XJ=1E-7 NCH=2.3549E17 VTH0=0.3691}
+        \item \texttt{+ K1=0.5810697 K2=4.774618E-3 K3=0.0431669}
+        \item \texttt{+ ... [hundreds of parameters for advanced models])}
+    \end{itemize}
     
     \subsection{Model Complexity Considerations}
     \begin{itemize}
@@ -306,11 +289,11 @@ THETA: Damping factor
 \section{Analysis Types}
 
 \begin{frame}{DC Analysis}
-    \begin{lstlisting}
-.DC SRCNAME VSTART VSTOP VINCR [SRC2NAME VSTART2 VSTOP2 VINCR2]
-.DC V1 -5 5 0.1              ; Single source sweep
-.DC V1 0 5 0.1 TEMP -40 125 25  ; Nested sweep with temperature
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.DC SRCNAME VSTART VSTOP VINCR [SRC2NAME VSTART2 VSTOP2 VINCR2]}
+        \item \texttt{.DC V1 -5 5 0.1} ; Single source sweep
+        \item \texttt{.DC V1 0 5 0.1 TEMP -40 125 25} ; Nested sweep with temperature
+    \end{itemize}
     
     \subsection{Applications for IC Design}
     \begin{itemize}
@@ -330,11 +313,11 @@ THETA: Damping factor
 \end{frame}
 
 \begin{frame}{AC Analysis}
-    \begin{lstlisting}
-.AC DEC|OCT|LIN NP FSTART FSTOP
-.AC DEC 100 1 1G             ; Logarithmic frequency sweep
-.AC LIN 1000 1k 100k         ; Linear frequency sweep
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.AC DEC|OCT|LIN NP FSTART FSTOP}
+        \item \texttt{.AC DEC 100 1 1G} ; Logarithmic frequency sweep
+        \item \texttt{.AC LIN 1000 1k 100k} ; Linear frequency sweep
+    \end{itemize}
     
     \subsection{Critical for Analog IC Design}
     \begin{itemize}
@@ -347,7 +330,7 @@ THETA: Damping factor
     \begin{exampleblock}{Stability Analysis}
         Use AC analysis with loop breaking to determine:
         \begin{itemize}
-            \item Phase margin > 60° for stability
+            \item Phase margin > 60$^\circ$ for stability
             \item Gain margin > 10dB
             \item Unity gain frequency
         \end{itemize}
@@ -356,22 +339,22 @@ THETA: Damping factor
 
 \begin{frame}{Transient Analysis}
     \subsection{Syntax and Parameters}
-    \begin{lstlisting}
-.TRAN TSTEP TSTOP [TSTART [TMAX]] [UIC]
-.TRAN 1n 100n 0 0.1n UIC
-
-TSTEP: Print step interval
-TSTOP: Final time
-TSTART: Start time for printing (default 0)
-TMAX: Maximum internal timestep
-UIC: Use Initial Conditions
-    \end{lstlisting}
+    \texttt{.TRAN TSTEP TSTOP [TSTART [TMAX]] [UIC]}
+    
+    \texttt{.TRAN 1n 100n 0 0.1n UIC}
+    \begin{itemize}
+        \item TSTEP: Print step interval
+        \item TSTOP: Final time
+        \item TSTART: Start time for printing (default 0)
+        \item TMAX: Maximum internal timestep
+        \item UIC: Use Initial Conditions
+    \end{itemize}
     
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \subsection{Timestep Selection}
             \begin{itemize}
-                \item \textbf{Rule of thumb:} TSTEP ≤ Period/100
+                \item \textbf{Rule of thumb:} TSTEP $\leq$ Period/100
                 \item \textbf{High-speed circuits:} Consider rise/fall times
                 \item \textbf{Oscillators:} Multiple periods for settling
             \end{itemize}
@@ -390,11 +373,11 @@ UIC: Use Initial Conditions
 
 \begin{frame}{Initial Conditions and Advanced Transient}
     \subsection{Initial Conditions}
-    \begin{lstlisting}
-C1 1 2 1p IC=2.5V          ; Capacitor initial voltage
-L1 1 2 1n IC=0A            ; Inductor initial current
-.IC V(3)=1.2V V(4)=0V      ; Node initial conditions
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{C1 1 2 1p IC=2.5V} ; Capacitor initial voltage
+        \item \texttt{L1 1 2 1n IC=0A} ; Inductor initial current
+        \item \texttt{.IC V(3)=1.2V V(4)=0V} ; Node initial conditions
+    \end{itemize}
     
     \begin{alertblock}{Advanced Tip}
         Use .IC for complex bias networks, UIC for charge-sharing analysis
@@ -412,10 +395,10 @@ L1 1 2 1n IC=0A            ; Inductor initial current
 \section{Advanced Analysis Types}
 
 \begin{frame}{Noise Analysis}
-    \begin{lstlisting}
-.NOISE V(OUTPUT) VIN DEC 100 1 1G
-.NOISE V(5) VIN OCT 20 1k 1MEG 1
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.NOISE V(OUTPUT) VIN DEC 100 1 1G}
+        \item \texttt{.NOISE V(5) VIN OCT 20 1k 1MEG 1}
+    \end{itemize}
     
     \begin{itemize}
         \item \textbf{Output node:} Where noise is measured
@@ -438,16 +421,16 @@ L1 1 2 1n IC=0A            ; Inductor initial current
 
 \begin{frame}{Monte Carlo and Sensitivity Analysis}
     \subsection{Monte Carlo Analysis}
-    \begin{lstlisting}
-.MC 100 TRAN 1n 100n YMAX V(out)   ; 100 runs, find max V(out)
-.PARAM R1_VAR=GAUSS(1k,50,3)       ; Gaussian distribution
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.MC 100 TRAN 1n 100n YMAX V(out)} ; 100 runs, find max V(out)
+        \item \texttt{.PARAM R1\_VAR=GAUSS(1k,50,3)} ; Gaussian distribution
+    \end{itemize}
     
     \subsection{Sensitivity Analysis}
-    \begin{lstlisting}
-.SENS V(5)                          ; DC sensitivity
-.SENS V(out,5k)                     ; AC sensitivity at 5kHz
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.SENS V(5)} ; DC sensitivity
+        \item \texttt{.SENS V(out,5k)} ; AC sensitivity at 5kHz
+    \end{itemize}
     
     \begin{alertblock}{Process Variation Analysis}
         \textbf{Statistical Models:} Mismatch parameters, process corners \\
@@ -467,32 +450,32 @@ L1 1 2 1n IC=0A            ; Inductor initial current
 
 \begin{frame}{Output Control and Data Extraction}
     \subsection{Print Statements}
-    \begin{lstlisting}
-.PRINT DC V(1) V(2) I(VDD)          ; DC print
-.PRINT AC VM(5) VP(5) VDB(5)        ; AC magnitude, phase, dB
-.PRINT TRAN V(out) I(R1) P(M1)      ; Transient variables
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.PRINT DC V(1) V(2) I(VDD)} ; DC print
+        \item \texttt{.PRINT AC VM(5) VP(5) VDB(5)} ; AC magnitude, phase, dB
+        \item \texttt{.PRINT TRAN V(out) I(R1) P(M1)} ; Transient variables
+    \end{itemize}
     
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \subsection{Mathematical Functions}
-            \begin{lstlisting}
-VDB(5)    ; 20*log10(|V(5)|)
-VP(5)     ; Phase of V(5)
-VM(5)     ; Magnitude of V(5)
-VR(5)     ; Real part of V(5)
-VI(5)     ; Imaginary part of V(5)
-            \end{lstlisting}
+            \begin{itemize}
+                \item \texttt{VDB(5)} ; 20*log10(|V(5)|)
+                \item \texttt{VP(5)} ; Phase of V(5)
+                \item \texttt{VM(5)} ; Magnitude of V(5)
+                \item \texttt{VR(5)} ; Real part of V(5)
+                \item \texttt{VI(5)} ; Imaginary part of V(5)
+            \end{itemize}
         \end{column}
         \begin{column}{0.5\textwidth}
             \subsection{Device Parameters}
-            \begin{lstlisting}
-@M1[gm]      ; Transconductance
-@M1[gds]     ; Output conductance
-@M1[id]      ; Drain current
-@M1[vgs]     ; Gate-source voltage
-@M1[vth]     ; Threshold voltage
-            \end{lstlisting}
+            \begin{itemize}
+                \item \texttt{@M1[gm]} ; Transconductance
+                \item \texttt{@M1[gds]} ; Output conductance
+                \item \texttt{@M1[id]} ; Drain current
+                \item \texttt{@M1[vgs]} ; Gate-source voltage
+                \item \texttt{@M1[vth]} ; Threshold voltage
+            \end{itemize}
         \end{column}
     \end{columns}
 \end{frame}
@@ -513,34 +496,33 @@ VI(5)     ; Imaginary part of V(5)
     \end{itemize}
     
     \subsection{Measurement Examples}
-    \begin{lstlisting}
-.MEAS TRAN trise TRIG V(out) VAL=0.1 RISE=1 
-+                  TARG V(out) VAL=0.9 RISE=1
-.MEAS AC bandwidth WHEN VDB(out)=-3
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.MEAS TRAN trise TRIG V(out) VAL=0.1 RISE=1}
+        \item \texttt{+ TARG V(out) VAL=0.9 RISE=1}
+        \item \texttt{.MEAS AC bandwidth WHEN VDB(out)=-3}
+    \end{itemize}
 \end{frame}
 
 \section{Operating Modes}
 
 \begin{frame}{SPICE Operating Modes}
     \subsection{Batch Mode Operation}
-    \begin{lstlisting}
-# Command line execution
-spice3 -b input.cir > output.txt    # Background batch
-pspice input.cir                     # PSpice batch
-hspice input.sp                      # HSPICE batch
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{spice3 -b input.cir > output.txt} \# Background batch
+        \item \texttt{pspice input.cir} \# PSpice batch
+        \item \texttt{hspice input.sp} \# HSPICE batch
+    \end{itemize}
     
     \subsection{Interactive Mode}
-    \begin{lstlisting}
-spice3                              # Start interactive session
-spice 1 -> source input.cir         # Load circuit
-spice 2 -> run                      # Execute analyses
-spice 3 -> setplot tran1            # Select analysis
-spice 4 -> plot v(out)              # Generate plot
-spice 5 -> print v(out)             # Print values
-spice 6 -> quit                     # Exit
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{spice3} \# Start interactive session
+        \item \texttt{spice 1 -> source input.cir} \# Load circuit
+        \item \texttt{spice 2 -> run} \# Execute analyses
+        \item \texttt{spice 3 -> setplot tran1} \# Select analysis
+        \item \texttt{spice 4 -> plot v(out)} \# Generate plot
+        \item \texttt{spice 5 -> print v(out)} \# Print values
+        \item \texttt{spice 6 -> quit} \# Exit
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{Interactive Commands}
@@ -638,7 +620,7 @@ spice 6 -> quit                     # Exit
         \textbf{Components:} Pulse source, capacitor, diode, load resistor
     \end{alertblock}
     
-    \begin{lstlisting}[fontsize=\tiny]
+    \begin{verbatim}
 SPICE sample circuit - diode clamp
 *comment lines begin with asterisks
 *independent voltage source with DC value, AC value, and
@@ -654,11 +636,11 @@ D1 2 0 dclamp
 R1 2 0 1e5
 *model for diode
 .model dclamp D(IS=1e-14)
-    \end{lstlisting}
+    \end{verbatim}
 \end{frame}
 
 \begin{frame}[fragile]{Diode Clamp Example - Analysis Commands}
-    \begin{lstlisting}[fontsize=\small]
+    \begin{verbatim}
 *DC transfer function generated for this circuit
 .DC V1 -20 20 .1
 *AC frequency sweep - assumes circuit is biased with V1 = 1V
@@ -670,7 +652,7 @@ R1 2 0 1e5
 *save print data at .1 ms intervals
 *that's all folks
 .end
-    \end{lstlisting}
+    \end{verbatim}
     
     \subsection{Analysis Insights}
     \begin{itemize}
@@ -684,23 +666,21 @@ R1 2 0 1e5
 \section{Advanced SPICE Features}
 
 \begin{frame}{Hierarchical Design}
-    \begin{lstlisting}
-.SUBCKT OPAMP 1 2 3 4 5     ; Non-inv, Inv, Out, VDD, VSS
-* Internal circuitry here
-.ENDS OPAMP
-
-X1 in1 in2 out vdd vss OPAMP  ; Instantiate subcircuit
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.SUBCKT OPAMP 1 2 3 4 5} ; Non-inv, Inv, Out, VDD, VSS
+        \item \texttt{* Internal circuitry here}
+        \item \texttt{.ENDS OPAMP}
+        \item \texttt{X1 in1 in2 out vdd vss OPAMP} ; Instantiate subcircuit
+    \end{itemize}
     
     \subsection{Parameter Passing}
-    \begin{lstlisting}
-.SUBCKT DIFFPAIR 1 2 3 4 PARAMS: W=10u L=0.18u
-M1 3 1 5 4 NMOS W={W} L={L}
-M2 3 2 6 4 NMOS W={W} L={L}
-.ENDS
-
-X1 in+ in- out vss DIFFPAIR W=20u L=0.25u
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.SUBCKT DIFFPAIR 1 2 3 4 PARAMS: W=10u L=0.18u}
+        \item \texttt{M1 3 1 5 4 NMOS W=\{W\} L=\{L\}}
+        \item \texttt{M2 3 2 6 4 NMOS W=\{W\} L=\{L\}}
+        \item \texttt{.ENDS}
+        \item \texttt{X1 in+ in- out vss DIFFPAIR W=20u L=0.25u}
+    \end{itemize}
     
     \subsection{Advanced Hierarchy}
     \begin{itemize}
@@ -713,13 +693,13 @@ X1 in+ in- out vss DIFFPAIR W=20u L=0.25u
 
 \begin{frame}{Process Corners and Statistical Analysis}
     \subsection{Process Corners}
-    \begin{lstlisting}
-.LIB '/path/to/models' TT       ; Typical-Typical
-.LIB '/path/to/models' FF       ; Fast-Fast  
-.LIB '/path/to/models' SS       ; Slow-Slow
-.LIB '/path/to/models' SF       ; Slow-Fast
-.LIB '/path/to/models' FS       ; Fast-Slow
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.LIB '/path/to/models' TT} ; Typical-Typical
+        \item \texttt{.LIB '/path/to/models' FF} ; Fast-Fast
+        \item \texttt{.LIB '/path/to/models' SS} ; Slow-Slow
+        \item \texttt{.LIB '/path/to/models' SF} ; Slow-Fast
+        \item \texttt{.LIB '/path/to/models' FS} ; Fast-Slow
+    \end{itemize}
     
     \begin{alertblock}{Statistical Analysis}
         \textbf{Mismatch Analysis:} Device-to-device variations within the same die \\
@@ -739,15 +719,15 @@ X1 in+ in- out vss DIFFPAIR W=20u L=0.25u
 \section{Simulation Accuracy and Convergence}
 
 \begin{frame}{Convergence Options}
-    \begin{lstlisting}
-.OPTIONS GMIN=1e-12        ; Minimum conductance
-.OPTIONS ABSTOL=1e-12      ; Absolute current tolerance  
-.OPTIONS RELTOL=1e-3       ; Relative tolerance
-.OPTIONS VNTOL=1e-6        ; Voltage tolerance
-.OPTIONS ITL1=100          ; DC iteration limit
-.OPTIONS ITL2=50           ; DC transfer curve iteration limit
-.OPTIONS ITL4=10           ; Transient iteration limit
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.OPTIONS GMIN=1e-12} ; Minimum conductance
+        \item \texttt{.OPTIONS ABSTOL=1e-12} ; Absolute current tolerance
+        \item \texttt{.OPTIONS RELTOL=1e-3} ; Relative tolerance
+        \item \texttt{.OPTIONS VNTOL=1e-6} ; Voltage tolerance
+        \item \texttt{.OPTIONS ITL1=100} ; DC iteration limit
+        \item \texttt{.OPTIONS ITL2=50} ; DC transfer curve iteration limit
+        \item \texttt{.OPTIONS ITL4=10} ; Transient iteration limit
+    \end{itemize}
     
     \begin{columns}
         \begin{column}{0.5\textwidth}
@@ -774,12 +754,12 @@ X1 in+ in- out vss DIFFPAIR W=20u L=0.25u
 \end{frame}
 
 \begin{frame}{Advanced Solver Options}
-    \begin{lstlisting}
-.OPTIONS METHOD=GEAR       ; Integration method
-.OPTIONS MAXORD=2          ; Maximum integration order
-.OPTIONS PIVREL=1e-3       ; Relative pivot threshold
-.OPTIONS PIVTOL=1e-13      ; Absolute pivot threshold
-    \end{lstlisting}
+    \begin{itemize}
+        \item \texttt{.OPTIONS METHOD=GEAR} ; Integration method
+        \item \texttt{.OPTIONS MAXORD=2} ; Maximum integration order
+        \item \texttt{.OPTIONS PIVREL=1e-3} ; Relative pivot threshold
+        \item \texttt{.OPTIONS PIVTOL=1e-13} ; Absolute pivot threshold
+    \end{itemize}
     
     \subsection{Numerical Methods}
     \begin{itemize}

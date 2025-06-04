@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPICE Simulator Tutorial - Advanced Analog IC Design</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            page-break-after: always;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .slide h1 {
+            color: #1e3c72;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 3px solid #2a5298;
+            padding-bottom: 1rem;
+        }
+        
+        .slide h2 {
+            color: #2a5298;
+            font-size: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid #1e3c72;
+            padding-left: 1rem;
+        }
+        
+        .slide h3 {
+            color: #1e3c72;
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #2a5298;
+        }
+        
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+        
+        .element-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 1rem;
+        }
+        
+        .element-table th, .element-table td {
+            border: 1px solid #ddd;
+            padding: 0.8rem;
+            text-align: left;
+        }
+        
+        .element-table th {
+            background: #2a5298;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .element-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(30, 60, 114, 0.8);
+            padding: 10px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-btn {
+            background: white;
+            border: none;
+            padding: 8px 15px;
+            margin: 0 5px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #1e3c72;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .title-slide h1 {
+            color: white;
+            font-size: 3.5rem;
+            border: none;
+            margin-bottom: 2rem;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .instructor-info {
+            font-size: 1.2rem;
+            margin-top: 3rem;
+            opacity: 0.8;
+        }
+        
+        @media print {
+            .navigation { display: none; }
+            .slide { page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Title Slide -->
+<div class="slide title-slide">
+    <h1>SPICE Simulator Tutorial</h1>
+    <div class="subtitle">Advanced Analog IC Design - Graduate Level</div>
+    <div class="instructor-info">
+        <p><strong>Course:</strong> ECE 6XX - Advanced Analog IC Design</p>
+        <p><strong>Focus:</strong> Comprehensive SPICE Simulation Types & Operating Modes</p>
+        <p><strong>Target:</strong> Graduate Students with Advanced Circuit Design Background</p>
+    </div>
+</div>
+
+<!-- Slide 1: Introduction and Motivation -->
+<div class="slide">
+    <h1>Introduction to SPICE</h1>
+    
+    <h2>What is SPICE?</h2>
+    <div class="highlight">
+        <strong>SPICE:</strong> Simulation Program with Integrated Circuit Emphasis
+    </div>
+    
+    <h3>Historical Context & Versions</h3>
+    <ul>
+        <li><strong>Origin:</strong> University of California, Berkeley</li>
+        <li><strong>Major Versions:</strong> SPICE2G6 and SPICE3F4</li>
+        <li><strong>Commercial Variants:</strong> PSpice, HSPICE, Spectre, etc.</li>
+        <li><strong>Open Source:</strong> Ngspice, WinSpice, etc.</li>
+    </ul>
+    
+    <h3>Core Algorithm</h3>
+    <div class="highlight">
+        <p><strong>Modified Nodal Analysis (MNA)</strong> - Matrix-based circuit solving method that forms the mathematical foundation for all SPICE variants</p>
+    </div>
+    
+    <h3>Why This Matters for Advanced IC Design</h3>
+    <ul>
+        <li>Industry standard for analog circuit verification</li>
+        <li>Essential for understanding simulation limitations and accuracy</li>
+        <li>Critical for advanced topics like noise, mismatch, and process variation analysis</li>
+    </ul>
+</div>
+
+<!-- Slide 2: SPICE Input File Structure -->
+<div class="slide">
+    <h1>SPICE Input File Architecture</h1>
+    
+    <h2>File Structure Overview</h2>
+    <div class="two-column">
+        <div>
+            <h3>Line Types</h3>
+            <ul>
+                <li><strong>Title Line:</strong> First line (any text)</li>
+                <li><strong>Comments:</strong> * in column 1</li>
+                <li><strong>Netlist:</strong> Start with letter</li>
+                <li><strong>Control:</strong> . in column 1</li>
+                <li><strong>Continuation:</strong> + in column 1</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Critical Rules</h3>
+            <ul>
+                <li>First line is ALWAYS title</li>
+                <li>Last line must be .end</li>
+                <li>Case insensitive</li>
+                <li>Line-oriented parsing</li>
+            </ul>
+        </div>
+    </div>
+    
+    <h3>Token Separation</h3>
+    <div class="code-block">
+Separators: spaces, =, ( ), tabs
+Numbers: 1.23e-5, 0.0000123
+Strings: alphanumeric sequences
+Parameters: PARAM=VALUE format
+    </div>
+    
+    <div class="highlight">
+        <strong>Pro Tip:</strong> For advanced simulations, maintain consistent formatting and extensive commenting for complex parameter sweeps and Monte Carlo analyses.
+    </div>
+</div>
+
+<!-- Slide 3: Circuit Elements and Netlist -->
+<div class="slide">
+    <h1>Netlist Construction</h1>
+    
+    <h2>Node Labeling Requirements</h2>
+    <ul>
+        <li><strong>Ground Node:</strong> Must be labeled "0"</li>
+        <li><strong>Node Labels:</strong> Positive integers for compatibility</li>
+        <li><strong>Every Node:</strong> Must have a label, even two-terminal connections</li>
+    </ul>
+    
+    <h2>Circuit Element Types</h2>
+    <table class="element-table">
+        <tr><th>Letter</th><th>Element</th><th>Syntax Example</th></tr>
+        <tr><td>V</td><td>Voltage Source</td><td>V1 1 0 5V</td></tr>
+        <tr><td>I</td><td>Current Source</td><td>I1 1 0 1mA</td></tr>
+        <tr><td>R</td><td>Resistor</td><td>R1 1 2 1k</td></tr>
+        <tr><td>C</td><td>Capacitor</td><td>C1 1 2 1p IC=0V</td></tr>
+        <tr><td>L</td><td>Inductor</td><td>L1 1 2 1n IC=0A</td></tr>
+        <tr><td>D</td><td>Diode</td><td>D1 1 2 DMODEL</td></tr>
+        <tr><td>Q</td><td>BJT</td><td>Q1 c b e QMODEL</td></tr>
+        <tr><td>M</td><td>MOSFET</td><td>M1 d g s b MMODEL</td></tr>
+        <tr><td>T</td><td>Transmission Line</td><td>T1 1 0 2 0 Z0=50 TD=1ns</td></tr>
+    </table>
+    
+    <h3>Advanced Element Considerations</h3>
+    <div class="highlight">
+        For IC design: Pay special attention to MOSFET models (Level 1-100+), parasitic capacitances, and substrate connections
+    </div>
+</div>
+
+<!-- Slide 4: Source Specifications -->
+<div class="slide">
+    <h1>Independent Source Specifications</h1>
+    
+    <h2>Multi-Analysis Source Definition</h2>
+    <div class="code-block">
+V1 1 0 DC_VALUE AC AC_MAG AC_PHASE TRANSIENT_FUNCTION
+I1 1 0 DC_VALUE AC AC_MAG AC_PHASE TRANSIENT_FUNCTION
+    </div>
+    
+    <h3>DC Analysis Sources</h3>
+    <div class="code-block">
+VDC 1 0 5          ; 5V DC source
+VDC 1 0 DC 5       ; Explicit DC specification
+    </div>
+    
+    <h3>AC Analysis Sources</h3>
+    <div class="code-block">
+VAC 1 0 0 AC 1 0      ; 1V magnitude, 0° phase
+VAC 1 0 DC 0 AC 1 90  ; 0V DC, 1V AC at 90°
+    </div>
+    
+    <h3>Transient Analysis Functions</h3>
+    <div class="two-column">
+        <div>
+            <h4>Pulse Function</h4>
+            <div class="code-block">
+PULSE V1 V2 TD TR TF PW PER
+V1: Initial value
+V2: Peak value  
+TD: Delay time
+TR: Rise time
+TF: Fall time
+PW: Pulse width
+PER: Period
+            </div>
+        </div>
+        <div>
+            <h4>Sinusoidal Function</h4>
+            <div class="code-block">
+SIN VO VA FREQ TD THETA
+VO: Offset voltage
+VA: Amplitude
+FREQ: Frequency
+TD: Delay
+THETA: Damping factor
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Device Models -->
+<div class="slide">
+    <h1>Device Models</h1>
+    
+    <h2>Model Definition Syntax</h2>
+    <div class="code-block">
+.MODEL MODELNAME TYPE (PARAM1=VALUE1 PARAM2=VALUE2 ...)
+    </div>
+    
+    <h3>Common Model Types</h3>
+    <div class="two-column">
+        <div>
+            <h4>Semiconductor Models</h4>
+            <ul>
+                <li><strong>D:</strong> Diode models</li>
+                <li><strong>NPN/PNP:</strong> BJT models</li>
+                <li><strong>NMOS/PMOS:</strong> MOSFET models</li>
+                <li><strong>NJF/PJF:</strong> JFET models</li>
+            </ul>
+        </div>
+        <div>
+            <h4>Example Diode Model</h4>
+            <div class="code-block">
+.MODEL DCLAMP D(
++ IS=1e-14
++ RS=0.1
++ CJO=1p
++ VJ=0.7
++ M=0.5)
+            </div>
+        </div>
+    </div>
+    
+    <h3>Advanced MOSFET Models for IC Design</h3>
+    <div class="highlight">
+        <p><strong>Industry Models:</strong> BSIM3, BSIM4, PSP, HiSIM</p>
+        <p><strong>Key Parameters:</strong> VT0, KP, LAMBDA, GAMMA, PHI, TOX, LD, WD</p>
+        <p><strong>Process Variations:</strong> Statistical models, corner models, Monte Carlo parameters</p>
+    </div>
+    
+    <div class="code-block">
+.MODEL NMOS NMOS (LEVEL=49 VERSION=3.3.0
++ TOX=1.4E-8 XJ=1E-7 NCH=2.3549E17 VTH0=0.3691
++ K1=0.5810697 K2=4.774618E-3 K3=0.0431669
++ ... [hundreds of parameters for advanced models])
+    </div>
+</div>
+
+<!-- Slide 6: Analysis Types -->
+<div class="slide">
+    <h1>SPICE Analysis Types</h1>
+    
+    <h2>DC Analysis</h2>
+    <div class="code-block">
+.DC SRCNAME VSTART VSTOP VINCR [SRC2NAME VSTART2 VSTOP2 VINCR2]
+.DC V1 -5 5 0.1              ; Single source sweep
+.DC V1 0 5 0.1 TEMP -40 125 25  ; Nested sweep with temperature
+    </div>
+    
+    <h3>Applications for IC Design</h3>
+    <ul>
+        <li>Transfer characteristics (VTC curves)</li>
+        <li>Bias point analysis</li>
+        <li>Process corner verification</li>
+        <li>Temperature coefficient analysis</li>
+    </ul>
+    
+    <h2>AC Analysis</h2>
+    <div class="code-block">
+.AC DEC|OCT|LIN NP FSTART FSTOP
+.AC DEC 100 1 1G             ; Logarithmic frequency sweep
+.AC LIN 1000 1k 100k         ; Linear frequency sweep
+    </div>
+    
+    <h3>Critical for Analog IC Design</h3>
+    <ul>
+        <li><strong>Gain-bandwidth analysis</strong></li>
+        <li><strong>Stability analysis</strong> (phase/gain margins)</li>
+        <li><strong>Input/output impedance</strong></li>
+        <li><strong>Frequency response optimization</strong></li>
+    </ul>
+</div>
+
+<!-- Slide 7: Transient Analysis -->
+<div class="slide">
+    <h1>Transient Analysis</h1>
+    
+    <h2>Syntax and Parameters</h2>
+    <div class="code-block">
+.TRAN TSTEP TSTOP [TSTART [TMAX]] [UIC]
+.TRAN 1n 100n 0 0.1n UIC
+
+TSTEP: Print step interval
+TSTOP: Final time
+TSTART: Start time for printing (default 0)
+TMAX: Maximum internal timestep
+UIC: Use Initial Conditions
+    </div>
+    
+    <h3>Critical Considerations for IC Design</h3>
+    <div class="two-column">
+        <div>
+            <h4>Timestep Selection</h4>
+            <ul>
+                <li><strong>Rule of thumb:</strong> TSTEP ≤ Period/100</li>
+                <li><strong>High-speed circuits:</strong> Consider rise/fall times</li>
+                <li><strong>Oscillators:</strong> Multiple periods for settling</li>
+            </ul>
+        </div>
+        <div>
+            <h4>Applications</h4>
+            <ul>
+                <li>Settling time analysis</li>
+                <li>Slew rate measurements</li>
+                <li>Power-up sequences</li>
+                <li>Clock jitter analysis</li>
+            </ul>
+        </div>
+    </div>
+    
+    <h3>Initial Conditions</h3>
+    <div class="code-block">
+C1 1 2 1p IC=2.5V          ; Capacitor initial voltage
+L1 1 2 1n IC=0A            ; Inductor initial current
+.IC V(3)=1.2V V(4)=0V      ; Node initial conditions
+    </div>
+    
+    <div class="highlight">
+        <strong>Advanced Tip:</strong> Use .IC for complex bias networks, UIC for charge-sharing analysis
+    </div>
+</div>
+
+<!-- Slide 8: Advanced Analysis Types -->
+<div class="slide">
+    <h1>Advanced Analysis Types</h1>
+    
+    <h2>Noise Analysis</h2>
+    <div class="code-block">
+.NOISE V(OUTPUT) VIN DEC 100 1 1G
+.NOISE V(5) VIN OCT 20 1k 1MEG 1
+    </div>
+    <ul>
+        <li><strong>Output node:</strong> Where noise is measured</li>
+        <li><strong>Input source:</strong> Reference for input-referred noise</li>
+        <li><strong>Applications:</strong> LNA design, ADC noise analysis, oscillator phase noise</li>
+    </ul>
+    
+    <h2>Monte Carlo Analysis</h2>
+    <div class="code-block">
+.MC 100 TRAN 1n 100n YMAX V(out)   ; 100 runs, find max V(out)
+.PARAM R1_VAR=GAUSS(1k,50,3)       ; Gaussian distribution
+    </div>
+    
+    <h2>Sensitivity Analysis</h2>
+    <div class="code-block">
+.SENS V(5)                          ; DC sensitivity
+.SENS V(out,5k)                     ; AC sensitivity at 5kHz
+    </div>
+    
+    <h3>Process Variation Analysis</h3>
+    <div class="highlight">
+        <p><strong>Statistical Models:</strong> Mismatch parameters, process corners</p>
+        <p><strong>Key Applications:</strong> Yield optimization, design centering, worst-case analysis</p>
+    </div>
+</div>
+
+<!-- Slide 9: Output Control -->
+<div class="slide">
+    <h1>Output Control and Data Extraction</h1>
+    
+    <h2>Print Statements</h2>
+    <div class="code-block">
+.PRINT DC V(1) V(2) I(VDD)          ; DC print
+.PRINT AC VM(5) VP(5) VDB(5)        ; AC magnitude, phase, dB
+.PRINT TRAN V(out) I(R1) P(M1)      ; Transient variables
+    </div>
+    
+    <h3>Advanced Output Functions</h3>
+    <div class="two-column">
+        <div>
+            <h4>Mathematical Functions</h4>
+            <div class="code-block">
+VDB(5)    ; 20*log10(|V(5)|)
+VP(5)     ; Phase of V(5)
+VM(5)     ; Magnitude of V(5)
+VR(5)     ; Real part of V(5)
+VI(5)     ; Imaginary part of V(5)
+            </div>
+        </div>
+        <div>
+            <h4>Device Parameters</h4>
+            <div class="code-block">
+@M1[gm]      ; Transconductance
+@M1[gds]     ; Output conductance
+@M1[id]      ; Drain current
+@M1[vgs]     ; Gate-source voltage
+@M1[vth]     ; Threshold voltage
+            </div>
+        </div>
+    </div>
+    
+    <h2>Modern Graphical Output</h2>
+    <div class="highlight">
+        <p><strong>PSpice:</strong> .PROBE statement generates data for Probe viewer</p>
+        <p><strong>Other SPICE variants:</strong> Automatic generation of plot data files</p>
+        <p><strong>Post-processing:</strong> Python/MATLAB scripts for custom analysis</p>
+    </div>
+</div>
+
+<!-- Slide 10: Operating Modes -->
+<div class="slide">
+    <h1>SPICE Operating Modes</h1>
+    
+    <h2>Batch Mode Operation</h2>
+    <div class="code-block">
+# Command line execution
+spice3 -b input.cir > output.txt    # Background batch
+pspice input.cir                     # PSpice batch
+hspice input.sp                      # HSPICE batch
+    </div>
+    
+    <h2>Interactive Mode</h2>
+    <div class="code-block">
+spice3                              # Start interactive session
+spice 1 -> source input.cir         # Load circuit
+spice 2 -> run                      # Execute analyses
+spice 3 -> setplot tran1            # Select analysis
+spice 4 -> plot v(out)              # Generate plot
+spice 5 -> print v(out)             # Print values
+spice 6 -> quit                     # Exit
+    </div>
+    
+    <h3>Interactive Commands</h3>
+    <div class="two-column">
+        <div>
+            <h4>Analysis Control</h4>
+            <ul>
+                <li><strong>run:</strong> Execute analyses</li>
+                <li><strong>stop:</strong> Halt simulation</li>
+                <li><strong>resume:</strong> Continue simulation</li>
+                <li><strong>reset:</strong> Clear all data</li>
+            </ul>
+        </div>
+        <div>
+            <h4>Data Manipulation</h4>
+            <ul>
+                <li><strong>setplot:</strong> Choose analysis dataset</li>
+                <li><strong>display:</strong> Show available variables</li>
+                <li><strong>let:</strong> Define new variables</li>
+                <li><strong>alter:</strong> Modify circuit parameters</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 11: GUI vs Command Line -->
+<div class="slide">
+    <h1>GUI vs Command Line Interfaces</h1>
+    
+    <h2>Graphical User Interfaces</h2>
+    <div class="two-column">
+        <div>
+            <h3>Advantages</h3>
+            <ul>
+                <li>Visual schematic entry</li>
+                <li>Interactive simulation control</li>
+                <li>Real-time plotting</li>
+                <li>Parameter sweeping tools</li>
+                <li>Built-in calculators</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Popular GUI Tools</h3>
+            <ul>
+                <li><strong>Cadence Virtuoso</strong></li>
+                <li><strong>Mentor Graphics ADS</strong></li>
+                <li><strong>Synopsys HSPICE</strong></li>
+                <li><strong>LTspice</strong> (free)</li>
+                <li><strong>Ngspice + KiCad</strong></li>
+            </ul>
+        </div>
+    </div>
+    
+    <h2>Command Line Benefits</h2>
+    <div class="highlight">
+        <p><strong>Automation:</strong> Scripting, batch processing, parameter optimization</p>
+        <p><strong>Precision:</strong> Exact parameter control, repeatable simulations</p>
+        <p><strong>Integration:</strong> Design flows, version control, continuous integration</p>
+        <p><strong>Performance:</strong> Faster execution, lower memory overhead</p>
+    </div>
+    
+    <h3>Best Practices for IC Design</h3>
+    <ul>
+        <li><strong>Initial Design:</strong> Use GUI for rapid prototyping and visualization</li>
+        <li><strong>Verification:</strong> Command line for automated corner analysis</li>
+        <li><strong>Optimization:</strong> Scripted parameter sweeps and yield analysis</li>
+        <li><strong>Documentation:</strong> Netlist-based approach for reproducibility</li>
+    </ul>
+</div>
+
+<!-- Slide 12: Practical Example -->
+<div class="slide">
+    <h1>Complete SPICE Example: Diode Clamp Circuit</h1>
+    
+    <h2>Circuit Description</h2>
+    <div class="highlight">
+        <p><strong>Application:</strong> Voltage clamping circuit with RC time constant analysis</p>
+        <p><strong>Components:</strong> Pulse source, capacitor, diode, load resistor</p>
+    </div>
+    
+    <div class="code-block">
+SPICE sample circuit - diode clamp
+*comment lines begin with asterisks
+*independent voltage source with DC value, AC value, and
+*transient square wave value:
+V1 1 0 1 AC 1 pulse -10 20 0 1.e-8 1.e-8 1e-3 2e-3
+*the square wave defined above has -10V to +20V extent, with
+*a period of 2 milliseconds
+*capacitor for clamping
+C1 1 2 1e-6
+*diode for clamp - model name is dclamp
+D1 2 0 dclamp
+*load resistor - large enough that RC >> 2 ms
+R1 2 0 1e5
+*model for diode
+.model dclamp D(IS=1e-14)
+*DC transfer function generated for this circuit
+.DC V1 -20 20 .1
+*AC frequency sweep - assumes circuit is biased with V1 = 1V
+.AC OCT 20 10 1e2 1e4
+*frequency is swept logarithmically from 100Hz to 10000Hz
+*transient analysis will show clamping
+.TRAN 1e-4 8e-3 0 1e-5
+*start at time zero, go for 8 ms, make internal steps 10 microsec
+*save print data at .1 ms intervals
+*that's all folks
+.end
+    </div>
+</div>
+
+<!-- Slide 13: Advanced SPICE Features -->
+<div class="slide">
+    <h1>Advanced SPICE Features for IC Design</h1>
+    
+    <h2>Hierarchical Design</h2>
+    <div class="code-block">
+.SUBCKT OPAMP 1 2 3 4 5     ; Non-inv, Inv, Out, VDD, VSS
+* Internal circuitry here
+.ENDS OPAMP
+
+X1 in1 in2 out vdd vss OPAMP  ; Instantiate subcircuit
+    </div>
+    
+    <h2>Parameter Passing</h2>
+    <div class="code-block">
+.SUBCKT DIFFPAIR 1 2 3 4 PARAMS: W=10u L=0.18u
+M1 3 1 5 4 NMOS W={W} L={L}
+M2 3 2 6 4 NMOS W={W} L={L}
+.ENDS
+
+X1 in+ in- out vss DIFFPAIR W=20u L=0.25u
+    </div>
+    
+    <h2>Process Corners</h2>
+    <div class="code-block">
+.LIB '/path/to/models' TT       ; Typical-Typical
+.LIB '/path/to/models' FF       ; Fast-Fast  
+.LIB '/path/to/models' SS       ; Slow-Slow
+.LIB '/path/to/models' SF       ; Slow-Fast
+.LIB '/path/to/models' FS       ; Fast-Slow
+    </div>
+    
+    <h3>Statistical Analysis</h3>
+    <div class="highlight">
+        <p><strong>Mismatch Analysis:</strong> Device-to-device variations within the same die</p>
+        <p><strong>Process Variations:</strong> Die-to-die and wafer-to-wafer variations</p>
+        <p><strong>Environmental Stress:</strong> Temperature, voltage, aging effects</p>
+    </div>
+</div>
+
+<!-- Slide 14: Simulation Accuracy and Convergence -->
+<div class="slide">
+    <h1>Simulation Accuracy and Convergence</h1>
+    
+    <h2>Convergence Options</h2>
+    <div class="code-block">
+.OPTIONS GMIN=1e-12        ; Minimum conductance
+.OPTIONS ABSTOL=1e-12      ; Absolute current tolerance  
+.OPTIONS RELTOL=1e-3       ; Relative tolerance
+.OPTIONS VNTOL=1e-6        ; Voltage tolerance
+.OPTIONS ITL1=100          ; DC iteration limit
+.OPTIONS ITL2=50           ; DC transfer curve iteration limit
+.OPTIONS ITL4=10           ; Transient iteration limit
+    </div>
+    
+    <h2>Common Convergence Issues</h2>
+    <div class="two-column">
+        <div>
+            <h3>Causes</h3>
+            <ul>
+                <li>Poor initial guesses</li>
+                <li>Floating nodes</li>
+                <li>Large signal discontinuities</li>
+                <li>Unrealistic device models</li>
+                <li>Numerical precision limits</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Solutions</h3>
+            <ul>
+                <li>Add .NODESET statements</li>
+                <li>Use .IC for difficult bias points</li>
+                <li>Ramp sources gradually</li>
+                <li>Check model parameters</li>
+                <li>Adjust solver tolerances</li>
+            </ul>
+        </div>
+    </div>
+    
+    <h3>Advanced Solver Options</h3>
+    <div class="code-block">
+.OPTIONS METHOD=GEAR       ; Integration method
+.OPTIONS MAXORD=2          ; Maximum integration order
+.OPTIONS PIVREL=1e-3       ; Relative pivot threshold
+.OPTIONS PIVTOL=1e-13      ; Absolute pivot threshold
+    </div>
+</div>
+
+<!-- Slide 15: Best Practices and Industry Tips -->
+<div class="slide">
+    <h1>Industry Best Practices</h1>
+    
+    <h2>Simulation Strategy</h2>
+    <div class="two-column">
+        <div>
+            <h3>Design Phase Approach</h3>
+            <ol>
+                <li><strong>Hand Calculations</strong> - Initial sizing</li>
+                <li><strong>Simplified Models</strong> - Topology verification</li>
+                <li><strong>Detailed Models</strong> - Performance optimization</li>
+                <li><strong>Corner Analysis</strong> - Robustness verification</li>
+                <li><strong>Statistical Analysis</strong> - Yield prediction</li>
+            </ol>
+        </div>
+        <div>
+            <h3>Verification Hierarchy</h3>
+            <ol>
+                <li><strong>Unit Cells</strong> - Individual stages</li>
+                <li><strong>Functional Blocks</strong> - Combined stages</li>
+                <li><strong>System Level</strong> - Complete circuits</li>
+                <li><strong>Layout Parasitic</strong> - Post-layout verification</li>
+                <li><strong>Silicon Correlation</strong> - Model validation</li>
+            </ol>
+        </div>
+    </div>
+    
+    <h2>Documentation and Version Control</h2>
+    <div class="highlight">
+        <p><strong>Simulation Decks:</strong> Maintain versioned, commented netlist libraries</p>
+        <p><strong>Model Management:</strong> Centralized, validated device model libraries</p>
+        <p><strong>Results Archival:</strong> Automated result storage with simulation metadata</p>
+    </div>
+    
+    <h3>Performance Optimization</h3>
+    <ul>
+        <li><strong>Parallel Simulation:</strong> Multi-core utilization for corner analysis</li>
+        <li><strong>Incremental Updates:</strong> Only re-simulate changed portions</li>
+        <li><strong>Checkpoint/Restart:</strong> Resume long simulations efficiently</li>
+        <li><strong>Smart Convergence:</strong> Adaptive solver settings</li>
+    </ul>
+</div>
+
+<!-- Slide 16: Summary -->
+<div class="slide">
+    <h1>Summary and Key Takeaways</h1>
+    
+    <h2>Critical Knowledge for Advanced IC Design</h2>
+    <div class="highlight">
+        <p><strong>SPICE Fundamentals:</strong> Understanding MNA, convergence, and accuracy limitations</p>
+        <p><strong>Analysis Types:</strong> DC, AC, Transient, Noise, Monte Carlo applications</p>
+        <p><strong>Operating Modes:</strong> Strategic use of GUI vs. command line approaches</p>
+    </div>
+    
+    <h2>Industry-Relevant Skills</h2>
+    <div class="two-column">
+        <div>
+            <h3>Technical Competencies</h3>
+            <ul>
+                <li>Advanced device modeling</li>
+                <li>Statistical analysis interpretation</li>
+                <li>Convergence troubleshooting</li>
+                <li>Performance optimization</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Professional Skills</h3>
+            <ul>
+                <li>Simulation methodology</li>
+                <li>Documentation standards</li>
+                <li>Version control practices</li>
+                <li>Cross-platform compatibility</li>
+            </ul>
+        </div>
+    </div>
+    
+    <h2>Next Steps</h2>
+    <ol>
+        <li><strong>Hands-on Practice:</strong> Implement complex analog circuits using multiple SPICE variants</li>
+        <li><strong>Advanced Topics:</strong> Noise optimization, mismatch analysis, yield modeling</li>
+        <li><strong>Integration:</strong> SPICE in automated design flows and optimization loops</li>
+        <li><strong>Research Applications:</strong> Custom models, algorithm development, emerging devices</li>
+    </ol>
+    
+    <div class="highlight">
+        <p><strong>Remember:</strong> SPICE is a tool to validate and optimize your designs, not replace fundamental analog design intuition and understanding.</p>
+    </div>
+</div>
+
+<div class="navigation">
+    <button class="nav-btn" onclick="previousSlide()">◀ Prev</button>
+    <span id="slideCounter" style="color: white; margin: 0 10px;">1 / 16</span>
+    <button class="nav-btn" onclick="nextSlide()">Next ▶</button>
+</div>
+
+<script>
+let currentSlide = 0;
+const slides = document.querySelectorAll('.slide');
+const totalSlides = slides.length;
+
+function showSlide(n) {
+    slides.forEach(slide => slide.style.display = 'none');
+    currentSlide = (n + totalSlides) % totalSlides;
+    slides[currentSlide].style.display = 'flex';
+    document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+}
+
+function nextSlide() {
+    showSlide(currentSlide + 1);
+}
+
+function previousSlide() {
+    showSlide(currentSlide - 1);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+        previousSlide();
+    }
+});
+
+// Initialize
+showSlide(0);
+</script>
+
+</body>
+</html>
