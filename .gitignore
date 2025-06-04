@@ -23,3 +23,12 @@ _autosave-*
 *-save.kicad_pcb
 fp-info-cache
 **/.claude/settings.local.json
+
+# LaTeX build files
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
