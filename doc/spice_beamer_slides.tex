@@ -1,0 +1,899 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Code listing setup
+\lstset{
+    basicstyle=\footnotesize\ttfamily,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    breakatwhitespace=false,
+    tabsize=2,
+    showstringspaces=false,
+    columns=flexible,
+    aboveskip=10pt,
+    belowskip=10pt
+}
+
+% Title page information
+\title{SPICE Simulator Tutorial}
+\subtitle{Advanced Analog IC Design - Graduate Level}
+\author{ECE 6XX - Advanced Analog IC Design}
+\institute{Graduate Course}
+\date{\today}
+
+\begin{document}
+
+% Title slide
+\begin{frame}
+    \titlepage
+    \begin{center}
+        \textbf{Focus:} Comprehensive SPICE Simulation Types \& Operating Modes \\
+        \textbf{Target:} Graduate Students with Advanced Circuit Design Background
+    \end{center}
+\end{frame}
+
+% Table of contents
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+\section{Introduction to SPICE}
+
+\begin{frame}{Introduction to SPICE}
+    \begin{block}{What is SPICE?}
+        \textbf{SPICE:} Simulation Program with Integrated Circuit Emphasis
+    \end{block}
+    
+    \subsection{Historical Context \& Versions}
+    \begin{itemize}
+        \item \textbf{Origin:} University of California, Berkeley
+        \item \textbf{Major Versions:} SPICE2G6 and SPICE3F4
+        \item \textbf{Commercial Variants:} PSpice, HSPICE, Spectre, etc.
+        \item \textbf{Open Source:} Ngspice, WinSpice, etc.
+    \end{itemize}
+    
+    \subsection{Core Algorithm}
+    \begin{alertblock}{Modified Nodal Analysis (MNA)}
+        Matrix-based circuit solving method that forms the mathematical foundation for all SPICE variants
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Why This Matters for Advanced IC Design}
+    \begin{itemize}
+        \item Industry standard for analog circuit verification
+        \item Essential for understanding simulation limitations and accuracy
+        \item Critical for advanced topics like noise, mismatch, and process variation analysis
+        \item Foundation for automated design flows and optimization
+    \end{itemize}
+    
+    \begin{exampleblock}{Advanced Applications}
+        \begin{itemize}
+            \item Statistical yield analysis
+            \item Process corner verification
+            \item Parasitic extraction validation
+            \item Design optimization loops
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\section{SPICE Input File Architecture}
+
+\begin{frame}{SPICE Input File Architecture}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \subsection{Line Types}
+            \begin{itemize}
+                \item \textbf{Title Line:} First line (any text)
+                \item \textbf{Comments:} * in column 1
+                \item \textbf{Netlist:} Start with letter
+                \item \textbf{Control:} . in column 1
+                \item \textbf{Continuation:} + in column 1
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \subsection{Critical Rules}
+            \begin{itemize}
+                \item First line is ALWAYS title
+                \item Last line must be .end
+                \item Case insensitive
+                \item Line-oriented parsing
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    
+    \subsection{Token Separation}
+    \begin{lstlisting}
+Separators: spaces, =, ( ), tabs
+Numbers: 1.23e-5, 0.0000123
+Strings: alphanumeric sequences
+Parameters: PARAM=VALUE format
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}{File Structure Best Practices}
+    \begin{alertblock}{Pro Tip}
+        For advanced simulations, maintain consistent formatting and extensive commenting for complex parameter sweeps and Monte Carlo analyses.
+    \end{alertblock}
+    
+    \subsection{Advanced Considerations}
+    \begin{itemize}
+        \item Use meaningful variable names for complex circuits
+        \item Implement hierarchical commenting structure
+        \item Version control integration
+        \item Automated netlist generation from scripts
+    \end{itemize}
+    
+    \subsection{Common Pitfalls}
+    \begin{itemize}
+        \item Forgetting title line requirement
+        \item Missing .end statement
+        \item Inconsistent node numbering
+        \item Case sensitivity issues in model names
+    \end{itemize}
+\end{frame}
+
+\section{Netlist Construction}
+
+\begin{frame}{Netlist Construction}
+    \subsection{Node Labeling Requirements}
+    \begin{itemize}
+        \item \textbf{Ground Node:} Must be labeled "0"
+        \item \textbf{Node Labels:} Positive integers for compatibility
+        \item \textbf{Every Node:} Must have a label, even two-terminal connections
+    \end{itemize}
+    
+    \subsection{Circuit Element Types}
+    \begin{table}
+        \centering
+        \begin{tabular}{@{}cll@{}}
+            \toprule
+            Letter & Element & Syntax Example \\
+            \midrule
+            V & Voltage Source & V1 1 0 5V \\
+            I & Current Source & I1 1 0 1mA \\
+            R & Resistor & R1 1 2 1k \\
+            C & Capacitor & C1 1 2 1p IC=0V \\
+            L & Inductor & L1 1 2 1n IC=0A \\
+            D & Diode & D1 1 2 DMODEL \\
+            Q & BJT & Q1 c b e QMODEL \\
+            M & MOSFET & M1 d g s b MMODEL \\
+            T & Transmission Line & T1 1 0 2 0 Z0=50 TD=1ns \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Advanced Element Considerations}
+    \begin{alertblock}{For IC Design}
+        Pay special attention to MOSFET models (Level 1-100+), parasitic capacitances, and substrate connections
+    \end{alertblock}
+    
+    \subsection{MOSFET Modeling}
+    \begin{itemize}
+        \item Substrate connection critical for bulk effects
+        \item Model level selection (BSIM3, BSIM4, PSP)
+        \item Temperature dependencies
+        \item Process variation parameters
+    \end{itemize}
+    
+    \subsection{Parasitic Elements}
+    \begin{lstlisting}
+M1 d g s sub NMOS W=10u L=0.18u    ; Explicit substrate
+Cpd d sub 50f                      ; Drain-substrate cap
+Cgs g s 100f                       ; Gate-source cap
+    \end{lstlisting}
+\end{frame}
+
+\section{Independent Source Specifications}
+
+\begin{frame}{Independent Source Specifications}
+    \subsection{Multi-Analysis Source Definition}
+    \begin{lstlisting}
+V1 1 0 DC_VALUE AC AC_MAG AC_PHASE TRANSIENT_FUNCTION
+I1 1 0 DC_VALUE AC AC_MAG AC_PHASE TRANSIENT_FUNCTION
+    \end{lstlisting}
+    
+    \subsection{DC Analysis Sources}
+    \begin{lstlisting}
+VDC 1 0 5          ; 5V DC source
+VDC 1 0 DC 5       ; Explicit DC specification
+    \end{lstlisting}
+    
+    \subsection{AC Analysis Sources}
+    \begin{lstlisting}
+VAC 1 0 0 AC 1 0      ; 1V magnitude, 0° phase
+VAC 1 0 DC 0 AC 1 90  ; 0V DC, 1V AC at 90°
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Transient Analysis Functions}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \subsection{Pulse Function}
+            \begin{lstlisting}
+PULSE V1 V2 TD TR TF PW PER
+V1: Initial value
+V2: Peak value  
+TD: Delay time
+TR: Rise time
+TF: Fall time
+PW: Pulse width
+PER: Period
+            \end{lstlisting}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \subsection{Sinusoidal Function}
+            \begin{lstlisting}
+SIN VO VA FREQ TD THETA
+VO: Offset voltage
+VA: Amplitude
+FREQ: Frequency
+TD: Delay
+THETA: Damping factor
+            \end{lstlisting}
+        \end{column}
+    \end{columns}
+    
+    \subsection{Advanced Waveforms}
+    \begin{itemize}
+        \item PWL (Piecewise Linear) for arbitrary waveforms
+        \item EXP (Exponential) for RC responses
+        \item SFFM (Single Frequency FM) for modulation analysis
+    \end{itemize}
+\end{frame}
+
+\section{Device Models}
+
+\begin{frame}{Device Models}
+    \subsection{Model Definition Syntax}
+    \begin{lstlisting}
+.MODEL MODELNAME TYPE (PARAM1=VALUE1 PARAM2=VALUE2 ...)
+    \end{lstlisting}
+    
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \subsection{Semiconductor Models}
+            \begin{itemize}
+                \item \textbf{D:} Diode models
+                \item \textbf{NPN/PNP:} BJT models
+                \item \textbf{NMOS/PMOS:} MOSFET models
+                \item \textbf{NJF/PJF:} JFET models
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \subsection{Example Diode Model}
+            \begin{lstlisting}
+.MODEL DCLAMP D(
++ IS=1e-14
++ RS=0.1
++ CJO=1p
++ VJ=0.7
++ M=0.5)
+            \end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Advanced MOSFET Models for IC Design}
+    \begin{alertblock}{Industry Models}
+        \textbf{BSIM3, BSIM4, PSP, HiSIM} \\
+        \textbf{Key Parameters:} VT0, KP, LAMBDA, GAMMA, PHI, TOX, LD, WD \\
+        \textbf{Process Variations:} Statistical models, corner models, Monte Carlo parameters
+    \end{alertblock}
+    
+    \begin{lstlisting}[fontsize=\tiny]
+.MODEL NMOS NMOS (LEVEL=49 VERSION=3.3.0
++ TOX=1.4E-8 XJ=1E-7 NCH=2.3549E17 VTH0=0.3691
++ K1=0.5810697 K2=4.774618E-3 K3=0.0431669
++ ... [hundreds of parameters for advanced models])
+    \end{lstlisting}
+    
+    \subsection{Model Complexity Considerations}
+    \begin{itemize}
+        \item Level 1: Simple square-law model
+        \item Level 49: BSIM3v3 - Industry standard
+        \item Level 54: BSIM4 - Advanced short-channel effects
+        \item Statistical parameters for yield analysis
+    \end{itemize}
+\end{frame}
+
+\section{Analysis Types}
+
+\begin{frame}{DC Analysis}
+    \begin{lstlisting}
+.DC SRCNAME VSTART VSTOP VINCR [SRC2NAME VSTART2 VSTOP2 VINCR2]
+.DC V1 -5 5 0.1              ; Single source sweep
+.DC V1 0 5 0.1 TEMP -40 125 25  ; Nested sweep with temperature
+    \end{lstlisting}
+    
+    \subsection{Applications for IC Design}
+    \begin{itemize}
+        \item Transfer characteristics (VTC curves)
+        \item Bias point analysis
+        \item Process corner verification
+        \item Temperature coefficient analysis
+    \end{itemize}
+    
+    \subsection{Advanced DC Analysis}
+    \begin{itemize}
+        \item Multi-dimensional parameter sweeps
+        \item Operating point extraction
+        \item Small-signal parameter calculation
+        \item Convergence analysis for complex circuits
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{AC Analysis}
+    \begin{lstlisting}
+.AC DEC|OCT|LIN NP FSTART FSTOP
+.AC DEC 100 1 1G             ; Logarithmic frequency sweep
+.AC LIN 1000 1k 100k         ; Linear frequency sweep
+    \end{lstlisting}
+    
+    \subsection{Critical for Analog IC Design}
+    \begin{itemize}
+        \item \textbf{Gain-bandwidth analysis}
+        \item \textbf{Stability analysis} (phase/gain margins)
+        \item \textbf{Input/output impedance}
+        \item \textbf{Frequency response optimization}
+    \end{itemize}
+    
+    \begin{exampleblock}{Stability Analysis}
+        Use AC analysis with loop breaking to determine:
+        \begin{itemize}
+            \item Phase margin > 60° for stability
+            \item Gain margin > 10dB
+            \item Unity gain frequency
+        \end{itemize}
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Transient Analysis}
+    \subsection{Syntax and Parameters}
+    \begin{lstlisting}
+.TRAN TSTEP TSTOP [TSTART [TMAX]] [UIC]
+.TRAN 1n 100n 0 0.1n UIC
+
+TSTEP: Print step interval
+TSTOP: Final time
+TSTART: Start time for printing (default 0)
+TMAX: Maximum internal timestep
+UIC: Use Initial Conditions
+    \end{lstlisting}
+    
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \subsection{Timestep Selection}
+            \begin{itemize}
+                \item \textbf{Rule of thumb:} TSTEP ≤ Period/100
+                \item \textbf{High-speed circuits:} Consider rise/fall times
+                \item \textbf{Oscillators:} Multiple periods for settling
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \subsection{Applications}
+            \begin{itemize}
+                \item Settling time analysis
+                \item Slew rate measurements
+                \item Power-up sequences
+                \item Clock jitter analysis
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Initial Conditions and Advanced Transient}
+    \subsection{Initial Conditions}
+    \begin{lstlisting}
+C1 1 2 1p IC=2.5V          ; Capacitor initial voltage
+L1 1 2 1n IC=0A            ; Inductor initial current
+.IC V(3)=1.2V V(4)=0V      ; Node initial conditions
+    \end{lstlisting}
+    
+    \begin{alertblock}{Advanced Tip}
+        Use .IC for complex bias networks, UIC for charge-sharing analysis
+    \end{alertblock}
+    
+    \subsection{Transient Optimization}
+    \begin{itemize}
+        \item Adaptive timestep algorithms
+        \item Breakpoint insertion for discontinuities
+        \item Interpolation methods for output
+        \item Memory management for long simulations
+    \end{itemize}
+\end{frame}
+
+\section{Advanced Analysis Types}
+
+\begin{frame}{Noise Analysis}
+    \begin{lstlisting}
+.NOISE V(OUTPUT) VIN DEC 100 1 1G
+.NOISE V(5) VIN OCT 20 1k 1MEG 1
+    \end{lstlisting}
+    
+    \begin{itemize}
+        \item \textbf{Output node:} Where noise is measured
+        \item \textbf{Input source:} Reference for input-referred noise
+        \item \textbf{Applications:} LNA design, ADC noise analysis, oscillator phase noise
+    \end{itemize}
+    
+    \subsection{Noise Sources in IC Design}
+    \begin{itemize}
+        \item Thermal noise (4kTR)
+        \item Shot noise (2qI)
+        \item Flicker noise (1/f)
+        \item Induced gate noise in MOSFETs
+    \end{itemize}
+    
+    \begin{exampleblock}{Noise Optimization}
+        Critical for low-noise amplifiers, precision references, and high-resolution converters
+    \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Monte Carlo and Sensitivity Analysis}
+    \subsection{Monte Carlo Analysis}
+    \begin{lstlisting}
+.MC 100 TRAN 1n 100n YMAX V(out)   ; 100 runs, find max V(out)
+.PARAM R1_VAR=GAUSS(1k,50,3)       ; Gaussian distribution
+    \end{lstlisting}
+    
+    \subsection{Sensitivity Analysis}
+    \begin{lstlisting}
+.SENS V(5)                          ; DC sensitivity
+.SENS V(out,5k)                     ; AC sensitivity at 5kHz
+    \end{lstlisting}
+    
+    \begin{alertblock}{Process Variation Analysis}
+        \textbf{Statistical Models:} Mismatch parameters, process corners \\
+        \textbf{Key Applications:} Yield optimization, design centering, worst-case analysis
+    \end{alertblock}
+    
+    \subsection{Advanced Statistical Methods}
+    \begin{itemize}
+        \item Latin Hypercube Sampling
+        \item Importance sampling for rare events
+        \item Response surface modeling
+        \item Design of experiments (DOE)
+    \end{itemize}
+\end{frame}
+
+\section{Output Control and Data Extraction}
+
+\begin{frame}{Output Control and Data Extraction}
+    \subsection{Print Statements}
+    \begin{lstlisting}
+.PRINT DC V(1) V(2) I(VDD)          ; DC print
+.PRINT AC VM(5) VP(5) VDB(5)        ; AC magnitude, phase, dB
+.PRINT TRAN V(out) I(R1) P(M1)      ; Transient variables
+    \end{lstlisting}
+    
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \subsection{Mathematical Functions}
+            \begin{lstlisting}
+VDB(5)    ; 20*log10(|V(5)|)
+VP(5)     ; Phase of V(5)
+VM(5)     ; Magnitude of V(5)
+VR(5)     ; Real part of V(5)
+VI(5)     ; Imaginary part of V(5)
+            \end{lstlisting}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \subsection{Device Parameters}
+            \begin{lstlisting}
+@M1[gm]      ; Transconductance
+@M1[gds]     ; Output conductance
+@M1[id]      ; Drain current
+@M1[vgs]     ; Gate-source voltage
+@M1[vth]     ; Threshold voltage
+            \end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Modern Graphical Output}
+    \begin{alertblock}{Graphical Post-Processing}
+        \textbf{PSpice:} .PROBE statement generates data for Probe viewer \\
+        \textbf{Other SPICE variants:} Automatic generation of plot data files \\
+        \textbf{Post-processing:} Python/MATLAB scripts for custom analysis
+    \end{alertblock}
+    
+    \subsection{Advanced Data Processing}
+    \begin{itemize}
+        \item Automated measurement functions
+        \item Statistical data analysis
+        \item Multi-dimensional plotting
+        \item Export to standard formats (CSV, HDF5)
+    \end{itemize}
+    
+    \subsection{Measurement Examples}
+    \begin{lstlisting}
+.MEAS TRAN trise TRIG V(out) VAL=0.1 RISE=1 
++                  TARG V(out) VAL=0.9 RISE=1
+.MEAS AC bandwidth WHEN VDB(out)=-3
+    \end{lstlisting}
+\end{frame}
+
+\section{Operating Modes}
+
+\begin{frame}{SPICE Operating Modes}
+    \subsection{Batch Mode Operation}
+    \begin{lstlisting}
+# Command line execution
+spice3 -b input.cir > output.txt    # Background batch
+pspice input.cir                     # PSpice batch
+hspice input.sp                      # HSPICE batch
+    \end{lstlisting}
+    
+    \subsection{Interactive Mode}
+    \begin{lstlisting}
+spice3                              # Start interactive session
+spice 1 -> source input.cir         # Load circuit
+spice 2 -> run                      # Execute analyses
+spice 3 -> setplot tran1            # Select analysis
+spice 4 -> plot v(out)              # Generate plot
+spice 5 -> print v(out)             # Print values
+spice 6 -> quit                     # Exit
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Interactive Commands}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \subsection{Analysis Control}
+            \begin{itemize}
+                \item \textbf{run:} Execute analyses
+                \item \textbf{stop:} Halt simulation
+                \item \textbf{resume:} Continue simulation
+                \item \textbf{reset:} Clear all data
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \subsection{Data Manipulation}
+            \begin{itemize}
+                \item \textbf{setplot:} Choose analysis dataset
+                \item \textbf{display:} Show available variables
+                \item \textbf{let:} Define new variables
+                \item \textbf{alter:} Modify circuit parameters
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    
+    \subsection{Advanced Interactive Features}
+    \begin{itemize}
+        \item Real-time parameter modification
+        \item Interactive debugging
+        \item Custom function definition
+        \item Script execution within interactive mode
+    \end{itemize}
+\end{frame}
+
+\section{GUI vs Command Line}
+
+\begin{frame}{GUI vs Command Line Interfaces}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \subsection{GUI Advantages}
+            \begin{itemize}
+                \item Visual schematic entry
+                \item Interactive simulation control
+                \item Real-time plotting
+                \item Parameter sweeping tools
+                \item Built-in calculators
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \subsection{Popular GUI Tools}
+            \begin{itemize}
+                \item \textbf{Cadence Virtuoso}
+                \item \textbf{Mentor Graphics ADS}
+                \item \textbf{Synopsys HSPICE}
+                \item \textbf{LTspice} (free)
+                \item \textbf{Ngspice + KiCad}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    
+    \begin{alertblock}{Command Line Benefits}
+        \textbf{Automation:} Scripting, batch processing, parameter optimization \\
+        \textbf{Precision:} Exact parameter control, repeatable simulations \\
+        \textbf{Integration:} Design flows, version control, continuous integration \\
+        \textbf{Performance:} Faster execution, lower memory overhead
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Best Practices for IC Design}
+    \subsection{Strategic Tool Usage}
+    \begin{itemize}
+        \item \textbf{Initial Design:} Use GUI for rapid prototyping and visualization
+        \item \textbf{Verification:} Command line for automated corner analysis
+        \item \textbf{Optimization:} Scripted parameter sweeps and yield analysis
+        \item \textbf{Documentation:} Netlist-based approach for reproducibility
+    \end{itemize}
+    
+    \subsection{Integration Strategies}
+    \begin{itemize}
+        \item Version control systems (Git, SVN)
+        \item Continuous integration pipelines
+        \item Automated regression testing
+        \item Design database management
+    \end{itemize}
+    
+    \begin{exampleblock}{Professional Workflow}
+        Combine GUI for design entry with command-line automation for verification and optimization
+    \end{exampleblock}
+\end{frame}
+
+\section{Practical Example}
+
+\begin{frame}[fragile]{Complete SPICE Example: Diode Clamp Circuit}
+    \begin{alertblock}{Circuit Description}
+        \textbf{Application:} Voltage clamping circuit with RC time constant analysis \\
+        \textbf{Components:} Pulse source, capacitor, diode, load resistor
+    \end{alertblock}
+    
+    \begin{lstlisting}[fontsize=\tiny]
+SPICE sample circuit - diode clamp
+*comment lines begin with asterisks
+*independent voltage source with DC value, AC value, and
+*transient square wave value:
+V1 1 0 1 AC 1 pulse -10 20 0 1.e-8 1.e-8 1e-3 2e-3
+*the square wave defined above has -10V to +20V extent, with
+*a period of 2 milliseconds
+*capacitor for clamping
+C1 1 2 1e-6
+*diode for clamp - model name is dclamp
+D1 2 0 dclamp
+*load resistor - large enough that RC >> 2 ms
+R1 2 0 1e5
+*model for diode
+.model dclamp D(IS=1e-14)
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Diode Clamp Example - Analysis Commands}
+    \begin{lstlisting}[fontsize=\small]
+*DC transfer function generated for this circuit
+.DC V1 -20 20 .1
+*AC frequency sweep - assumes circuit is biased with V1 = 1V
+.AC OCT 20 10 1e2 1e4
+*frequency is swept logarithmically from 100Hz to 10000Hz
+*transient analysis will show clamping
+.TRAN 1e-4 8e-3 0 1e-5
+*start at time zero, go for 8 ms, make internal steps 10 microsec
+*save print data at .1 ms intervals
+*that's all folks
+.end
+    \end{lstlisting}
+    
+    \subsection{Analysis Insights}
+    \begin{itemize}
+        \item DC analysis reveals clamping threshold
+        \item AC analysis shows frequency response limitations
+        \item Transient analysis demonstrates dynamic clamping behavior
+        \item Time constants validate RC >> switching period
+    \end{itemize}
+\end{frame}
+
+\section{Advanced SPICE Features}
+
+\begin{frame}{Hierarchical Design}
+    \begin{lstlisting}
+.SUBCKT OPAMP 1 2 3 4 5     ; Non-inv, Inv, Out, VDD, VSS
+* Internal circuitry here
+.ENDS OPAMP
+
+X1 in1 in2 out vdd vss OPAMP  ; Instantiate subcircuit
+    \end{lstlisting}
+    
+    \subsection{Parameter Passing}
+    \begin{lstlisting}
+.SUBCKT DIFFPAIR 1 2 3 4 PARAMS: W=10u L=0.18u
+M1 3 1 5 4 NMOS W={W} L={L}
+M2 3 2 6 4 NMOS W={W} L={L}
+.ENDS
+
+X1 in+ in- out vss DIFFPAIR W=20u L=0.25u
+    \end{lstlisting}
+    
+    \subsection{Advanced Hierarchy}
+    \begin{itemize}
+        \item Multi-level subcircuit nesting
+        \item Global parameter propagation
+        \item Conditional circuit topology
+        \item Library management
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Process Corners and Statistical Analysis}
+    \subsection{Process Corners}
+    \begin{lstlisting}
+.LIB '/path/to/models' TT       ; Typical-Typical
+.LIB '/path/to/models' FF       ; Fast-Fast  
+.LIB '/path/to/models' SS       ; Slow-Slow
+.LIB '/path/to/models' SF       ; Slow-Fast
+.LIB '/path/to/models' FS       ; Fast-Slow
+    \end{lstlisting}
+    
+    \begin{alertblock}{Statistical Analysis}
+        \textbf{Mismatch Analysis:} Device-to-device variations within the same die \\
+        \textbf{Process Variations:} Die-to-die and wafer-to-wafer variations \\
+        \textbf{Environmental Stress:} Temperature, voltage, aging effects
+    \end{alertblock}
+    
+    \subsection{Corner Analysis Strategy}
+    \begin{itemize}
+        \item Systematic corner verification
+        \item Statistical yield prediction
+        \item Design centering optimization
+        \item Robustness validation
+    \end{itemize}
+\end{frame}
+
+\section{Simulation Accuracy and Convergence}
+
+\begin{frame}{Convergence Options}
+    \begin{lstlisting}
+.OPTIONS GMIN=1e-12        ; Minimum conductance
+.OPTIONS ABSTOL=1e-12      ; Absolute current tolerance  
+.OPTIONS RELTOL=1e-3       ; Relative tolerance
+.OPTIONS VNTOL=1e-6        ; Voltage tolerance
+.OPTIONS ITL1=100          ; DC iteration limit
+.OPTIONS ITL2=50           ; DC transfer curve iteration limit
+.OPTIONS ITL4=10           ; Transient iteration limit
+    \end{lstlisting}
+    
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \subsection{Common Issues}
+            \begin{itemize}
+                \item Poor initial guesses
+                \item Floating nodes
+                \item Large signal discontinuities
+                \item Unrealistic device models
+                \item Numerical precision limits
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \subsection{Solutions}
+            \begin{itemize}
+                \item Add .NODESET statements
+                \item Use .IC for difficult bias points
+                \item Ramp sources gradually
+                \item Check model parameters
+                \item Adjust solver tolerances
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Advanced Solver Options}
+    \begin{lstlisting}
+.OPTIONS METHOD=GEAR       ; Integration method
+.OPTIONS MAXORD=2          ; Maximum integration order
+.OPTIONS PIVREL=1e-3       ; Relative pivot threshold
+.OPTIONS PIVTOL=1e-13      ; Absolute pivot threshold
+    \end{lstlisting}
+    
+    \subsection{Numerical Methods}
+    \begin{itemize}
+        \item \textbf{GEAR:} Implicit multi-step method for stiff systems
+        \item \textbf{TRAPEZOIDAL:} Second-order accurate, A-stable
+        \item \textbf{EULER:} First-order, simple but less accurate
+    \end{itemize}
+    
+    \begin{exampleblock}{Convergence Strategy}
+        Start with relaxed tolerances, then tighten for accuracy. Use source ramping and initial conditions for difficult circuits.
+    \end{exampleblock}
+\end{frame}
+
+\section{Industry Best Practices}
+
+\begin{frame}{Simulation Strategy}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \subsection{Design Phase Approach}
+            \begin{enumerate}
+                \item \textbf{Hand Calculations} - Initial sizing
+                \item \textbf{Simplified Models} - Topology verification
+                \item \textbf{Detailed Models} - Performance optimization
+                \item \textbf{Corner Analysis} - Robustness verification
+                \item \textbf{Statistical Analysis} - Yield prediction
+            \end{enumerate}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \subsection{Verification Hierarchy}
+            \begin{enumerate}
+                \item \textbf{Unit Cells} - Individual stages
+                \item \textbf{Functional Blocks} - Combined stages
+                \item \textbf{System Level} - Complete circuits
+                \item \textbf{Layout Parasitic} - Post-layout verification
+                \item \textbf{Silicon Correlation} - Model validation
+            \end{enumerate}
+        \end{column}
+    \end{columns}
+    
+    \begin{alertblock}{Documentation and Version Control}
+        \textbf{Simulation Decks:} Maintain versioned, commented netlist libraries \\
+        \textbf{Model Management:} Centralized, validated device model libraries \\
+        \textbf{Results Archival:} Automated result storage with simulation metadata
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Performance Optimization}
+    \subsection{Computational Efficiency}
+    \begin{itemize}
+        \item \textbf{Parallel Simulation:} Multi-core utilization for corner analysis
+        \item \textbf{Incremental Updates:} Only re-simulate changed portions
+        \item \textbf{Checkpoint/Restart:} Resume long simulations efficiently
+        \item \textbf{Smart Convergence:} Adaptive solver settings
+    \end{itemize}
+    
+    \subsection{Automation Strategies}
+    \begin{itemize}
+        \item Scripted parameter sweeps
+        \item Automated measurement extraction
+        \item Statistical post-processing
+        \item Design optimization loops
+    \end{itemize}
+    
+    \begin{exampleblock}{Modern Workflows}
+        Integration with machine learning for design space exploration and automated optimization
+    \end{exampleblock}
+\end{frame}
+
+\section{Summary}
+
+\begin{frame}{Summary and Key Takeaways}
+    \begin{alertblock}{Critical Knowledge for Advanced IC Design}
+        \textbf{SPICE Fundamentals:} Understanding MNA, convergence, and accuracy limitations \\
+        \textbf{Analysis Types:} DC, AC, Transient, Noise, Monte Carlo applications \\
+        \textbf{Operating Modes:} Strategic use of GUI vs. command line approaches
+    \end{alertblock}
+    
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \subsection{Technical Competencies}
+            \begin{itemize}
+                \item Advanced device modeling
+                \item Statistical analysis interpretation
+                \item Convergence troubleshooting
+                \item Performance optimization
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \subsection{Professional Skills}
+            \begin{itemize}
+                \item Simulation methodology
+                \item Documentation standards
+                \item Version control practices
+                \item Cross-platform compatibility
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Next Steps}
+    \begin{enumerate}
+        \item \textbf{Hands-on Practice:} Implement complex analog circuits using multiple SPICE variants
+        \item \textbf{Advanced Topics:} Noise optimization, mismatch analysis, yield modeling
+        \item \textbf{Integration:} SPICE in automated design flows and optimization loops
+        \item \textbf{Research Applications:} Custom models, algorithm development, emerging devices
+    \end{enumerate}
+    
+    \begin{alertblock}{Remember}
+        SPICE is a tool to validate and optimize your designs, not replace fundamental analog design intuition and understanding.
+    \end{alertblock}
+    
+    \begin{center}
+        \Large{Questions and Discussion}
+    \end{center}
+\end{frame}
+
+\end{document}
